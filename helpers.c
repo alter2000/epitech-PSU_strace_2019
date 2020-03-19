@@ -11,13 +11,14 @@ void loop(bool full, pid_t p)
 {
     for (; !wait_syscall(p); ) {
         print_syscall(full, p);
+        // TODO: hmmmmmmm
         if (wait_syscall(p))
             break;
         print_ret(full, p);
     }
 }
 
-long _get_registers(pid_t p, int off)
+unsigned long long _get_registers(pid_t p, int off)
 {
     long ret;
 

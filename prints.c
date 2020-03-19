@@ -7,12 +7,16 @@
 
 #include "strace.h"
 
+extern char **environ;
+
 void print_ret(bool full, pid_t p)
 {
-    int ret = REGS(p, RETS);
+    struct user_regs_struct ret = REGS(p, RETS);
 
-    (void)ret;
-    (void)full;
+    if (ret.orig_rax == SC_SYNC || ret.orig_rax == SC_EXIT)
+        fprintf(stderr, "?\n");
+    else
+        fprintf(stderr,  full ? "%lld\n" : "0x%llx\n", ret.rax);
 }
 
 char *syscall_name(int c)

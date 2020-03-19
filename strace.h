@@ -36,9 +36,13 @@ void print_syscall(bool full, pid_t p);
 void trace(bool full, pid_t pid);
 void loop(bool full, pid_t p);
 bool wait_syscall(pid_t p);
-long _get_registers(pid_t p, int off);
+unsigned long long _get_registers(pid_t p, int off);
 
 #define REGS(a, b) _get_registers((a), offsetof(struct user, regs.b))
 #define RETS rax
+#define MAX_SCS 328
+#define SC_SYNC 162
+#define SC_EXIT 231
+#define SC_EXE  59
 
 #endif
