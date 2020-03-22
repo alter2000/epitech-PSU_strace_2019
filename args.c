@@ -13,15 +13,15 @@ void parse_args(opts_t *as, int *off, int c, const char **v)
         fputs("no arguments; try `--help`?", stderr);
         exit(84);
     }
-    if (strcmp(v[1], "--help")) {
+    if (!strcmp(v[1], "--help")) {
         fputs("USAGE: ./strace [-s] [-p <pid>|<command>]", stdout);
         exit(0);
     }
-    if (strcmp(v[*off], "-s")) {
+    if (!strcmp(v[*off], "-s")) {
         as->s = true;
         (*off)++;
     }
-    if (strcmp(v[*off], "-p")) {
+    if (!strcmp(v[*off], "-p")) {
         as->p = true;
         as->grab = atoi(v[*off + 1]);
         if (!as->grab)

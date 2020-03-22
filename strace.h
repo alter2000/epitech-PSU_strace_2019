@@ -5,10 +5,11 @@
 ** automated desc ftw
 */
 
-#ifndef STRACE_H
-#define STRACE_H__
+#ifndef STRACE_H_
+#define STRACE_H_
 
 #include <errno.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -16,10 +17,11 @@
 #include <string.h>
 #include <sys/ptrace.h>
 #include <sys/reg.h>
+#include <sys/syscall.h>
 #include <sys/types.h>
+#include <sys/user.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <sys/user.h>
 
 typedef struct {
     bool s;
@@ -27,22 +29,26 @@ typedef struct {
     pid_t grab;
 } opts_t;
 
-void parse_args(opts_t *as, int *off, int c, const char **v);
-void child(int c, const char **v);
+void parse_args(opts_t *, int *, int, const char **);
+void child(int, const char **);
 
-void print_ret(bool full, pid_t p);
-void print_syscall(bool full, pid_t p);
+void trace(bool, pid_t);
+void loop(bool, pid_t);
+bool wait_syscall(pid_t);
+struct user_regs_struct _get_registers(pid_t);
+bool not_off(int, unsigned char);
 
-void trace(bool full, pid_t pid);
-void loop(bool full, pid_t p);
-bool wait_syscall(pid_t p);
-unsigned long long _get_registers(pid_t p, int off);
+void print_syscall(bool, pid_t);
+void print_ret(bool, pid_t);
+void print_arg(bool,
+        unsigned long long, struct user_regs_struct, unsigned char);
+void print_args(bool, pid_t, struct user_regs_struct);
+const char *get_printf_correct(unsigned long long, unsigned char);
 
-#define REGS(a, b) _get_registers((a), offsetof(struct user, regs.b))
+char *syscall_name(struct user_regs_struct);
+const char *get_printf_struct(unsigned long long, unsigned char);
+
+#define REGS(a) _get_registers((a))
 #define RETS rax
-#define MAX_SCS 328
-#define SC_SYNC 162
-#define SC_EXIT 231
-#define SC_EXE  59
 
 #endif

@@ -8,10 +8,11 @@
 NAME = strace
 
 SRC = \
-	  ./main.c \
 	  ./args.c \
-	  ./prints.c \
 	  ./helpers.c \
+	  ./logic.c \
+	  ./main.c \
+	  ./prints.c \
 
 CPL = gcc
 CFLAGS = -Wextra -Wall -I.
@@ -32,7 +33,7 @@ $(NAME): $(OBJ)
 	$(CPL) -o $(NAME) $(OBJ) $(LDFLAGS)
 
 debug: $(SRC)
-	$(CPL) -o $(NAME) $(SRC) $(DFLAGS) $(LDFLAGS)
+	clang -o $(NAME) $(SRC) $(DFLAGS) $(LDFLAGS)
 
 clean:
 	@$(foreach var, $(OBJ), if [ -e $(var) ] ; then rm -f $(var) ; fi;)
