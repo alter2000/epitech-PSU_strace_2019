@@ -13,9 +13,10 @@ SRC = \
 	  ./logic.c \
 	  ./main.c \
 	  ./prints.c \
+	  ./more_prints.c \
 
 CPL = gcc
-CFLAGS = -Wextra -Wall -I.
+CFLAGS = -Wextra -Wall -I. -O0
 LDFLAGS =
 DFLAGS = \
 	  -fsanitize=address \
@@ -23,7 +24,7 @@ DFLAGS = \
 	  -fsanitize=enum \
 	  -fsanitize=undefined \
 	  -fsanitize=nullability \
-	  -Wextra -Wall -I. -g
+	  -Wextra -Wall -I. -g -O0
 
 OBJ = $(SRC:.c=.o)
 

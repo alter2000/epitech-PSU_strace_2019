@@ -18,9 +18,22 @@ char *syscall_name(struct user_regs_struct c)
     return ret;
 }
 
+bool not_off(int i, unsigned char arg)
+{
+    return !(i < MAX_SCS && ALLSCS[i].as[arg] == OFF);
+}
+
 const char *get_printf_struct(unsigned long long scall, unsigned char idx)
 {
     (void)scall;
     (void)idx;
     return "%#llx";
+}
+
+void print_signal(int s)
+{
+    if (s < MAX_SIGS)
+        fprintf(stderr, "+++ killed by %s +++\n", ALLSIGS[WSTOPSIG(s)]);
+    else
+        fprintf(stderr, "+++ killed by %d +++\n", s, WSTOPSIG(s));
 }

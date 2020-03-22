@@ -44,11 +44,11 @@ bool wait_syscall(pid_t p)
             fprintf(stderr, "--- %s ---\n", ALLSIGS[WSTOPSIG(s)]);
             return 1;
         }
-        fprintf(stderr, "+++ killed by %d (%x) +++\n", s, WSTOPSIG(s));
+        print_signal(s);
     }
 }
 
-void trace(bool full, pid_t p)
+int trace(bool full, pid_t p)
 {
     int s = 0;
 
@@ -56,9 +56,5 @@ void trace(bool full, pid_t p)
     ptrace(PTRACE_SETOPTIONS, p, 0, PTRACE_O_TRACESYSGOOD
             | PTRACE_O_EXITKILL | PTRACE_O_TRACEEXIT);
     loop(full, p);
-}
-
-bool not_off(int i, unsigned char arg)
-{
-    return !(i < MAX_SCS && ALLSCS[i].as[arg] == OFF);
+    return 0;
 }

@@ -12,6 +12,8 @@ static void sigs(int p, siginfo_t *act, void *old)
     (void)act;
     (void)old;
     ptrace(PTRACE_DETACH, p, 0, 0);
+    ptrace(PTRACE_CONT, p, 0, 0);
+    exit(84);
 }
 
 static void attach_to(opts_t as)
@@ -20,16 +22,13 @@ static void attach_to(opts_t as)
 
     act.sa_sigaction = &sigs;
     act.sa_flags = SA_SIGINFO;
-    if (ptrace(PTRACE_DETACH, as.grab, 0, 0) &&
-            sigaction(SIGINT, &act, 0) < 0 &&
-            ptrace(PTRACE_ATTACH, as.grab, 0, 0)) {
-        perror("strace");
-        exit(84);
-    }
-    trace(as.s, as.grab);
-    if (ptrace(PTRACE_DETACH, as.grab, 0, 0)) {
-        perror("strace");
-        exit(84);
+    if (ptrace(PTRACE_DETACH, as.grab, 0, 0) ||
+        sigaction(SIGINT, &act, 0) < 0 ||
+        ptrace(PTRACE_ATTACH, as.grab, 0, 0) ||
+        trace(as.s, as.grab) ||
+        ptrace(PTRACE_DETACH, as.grab, 0, 0)) {
+            perror("strace");
+            exit(84);
     }
 }
 

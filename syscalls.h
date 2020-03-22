@@ -27,6 +27,8 @@ typedef struct
 /* actually 335 currently but too lazy to handwrite 7 more */
 #define MAX_SCS 329
 
+#define MAX_SIGS 63
+
 static const scent_t ALLSCS[]=
 {
     {"read", {U, CHAR_PTR, U, OFF, OFF, OFF}, RETVAL, 3},

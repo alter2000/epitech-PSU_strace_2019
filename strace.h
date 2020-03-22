@@ -32,21 +32,25 @@ typedef struct {
 void parse_args(opts_t *, int *, int, const char **);
 void child(int, const char **);
 
-void trace(bool, pid_t);
+int trace(bool, pid_t);
 void loop(bool, pid_t);
 bool wait_syscall(pid_t);
 struct user_regs_struct _get_registers(pid_t);
+
+char *syscall_name(struct user_regs_struct);
 bool not_off(int, unsigned char);
+const char *get_printf_struct(unsigned long long, unsigned char);
+void print_signal(int);
 
 void print_syscall(bool, pid_t);
 void print_ret(bool, pid_t);
-void print_arg(bool,
-        unsigned long long, struct user_regs_struct, unsigned char);
-void print_args(bool, pid_t, struct user_regs_struct);
-const char *get_printf_correct(unsigned long long, unsigned char);
+void print_arg(pid_t, bool, unsigned long long, unsigned char);
+void print_args(pid_t, bool, struct user_regs_struct);
+char *get_string(pid_t, unsigned long);
 
-char *syscall_name(struct user_regs_struct);
-const char *get_printf_struct(unsigned long long, unsigned char);
+const char *get_printf_fmt(unsigned long long, unsigned char);
+const void *get_printf_arg(pid_t, unsigned long long,
+        unsigned long long *, unsigned char);
 
 #define REGS(a) _get_registers((a))
 #define RETS rax

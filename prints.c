@@ -17,7 +17,7 @@ void print_syscall(bool full, pid_t p)
     if (num.rip == 0x050f)
         return;
     fprintf(stderr, "%s(", syscall_name(num));
-    print_args(full, p, num);
+    print_args(p, full, num);
     fprintf(stderr, ") = ");
 }
 
@@ -33,36 +33,43 @@ void print_ret(bool full, pid_t p)
                 ? "%lld\n" : "%#llx\n", ret.rax);
 }
 
-void print_args(bool full, pid_t p, struct user_regs_struct num)
+void print_args(pid_t p, bool full, struct user_regs_struct num)
 {
-    unsigned long long tmp = REGS(p).orig_rax;
-
-    for (char i = 0; i < 6 && not_off(tmp, i); i++)
-        print_arg(full, tmp, num, i);
+    for (char i = 0; i < 6 && not_off(num.orig_rax, i); i++)
+        print_arg(p, full, num.orig_rax, i);
 }
 
-void print_arg(bool full,
-        unsigned long long scidx, struct user_regs_struct d, unsigned char idx)
+void print_arg(pid_t p,
+        bool full, unsigned long long scidx, unsigned char idx)
 {
+    struct user_regs_struct d = REGS(p);
     unsigned long long as[6] = {d.rdi, d.rsi, d.rdx, d.r10, d.r8, d.r9};
 
     if (idx && not_off(scidx, idx))
         fprintf(stderr, ", ");
-    fprintf(stderr, full
-                        ? get_printf_correct(scidx, idx)
-                        : "%#llx", as[idx]);
+    if (!full)
+        fprintf(stderr, "%#llx", as[idx]);
+    fprintf(stderr, get_printf_fmt(scidx, idx),
+                    get_printf_arg(p, scidx, as, idx));
 }
 
-const char *get_printf_correct(unsigned long long scall, unsigned char idx)
+char *get_string(pid_t p, unsigned long addr)
 {
-    if (scall >= MAX_SCS)
-        return "%#llx";
-    switch (ALLSCS[scall].as[idx]) {
-        case OFF: return "";
-        case INT: case CHAR: case U: case U_L: case LONG: return "%llu";
-        case PTR: case CHAR_PTRPTR: return "%#llx";
-        case CHAR_PTR: return "\"%s\"";
-        case STRUCT: return get_printf_struct(scall, idx);
-    }
-    return "";
+	char *buf = malloc(4096);
+
+	for (unsigned long tmp = 0, read = 0; ; read += sizeof(unsigned long)) {
+		if (read + sizeof(unsigned long) > 4096)
+			buf = realloc(buf, sizeof(buf) * 2);
+        errno = 0;
+		tmp = ptrace(PTRACE_PEEKDATA, p, addr + read);
+		if (errno != 0) {
+            free(buf);
+            perror("strace");
+            exit(84);
+		}
+		memcpy(buf + read, &tmp, sizeof(unsigned long));
+		if (memchr(&tmp, 0, sizeof(unsigned long)) != NULL)
+			break;
+	}
+	return buf;
 }
