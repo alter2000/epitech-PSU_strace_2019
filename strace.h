@@ -39,7 +39,8 @@ struct user_regs_struct _get_registers(pid_t);
 
 char *syscall_name(struct user_regs_struct);
 bool not_off(int, unsigned char);
-const char *get_printf_struct(unsigned long long, unsigned char);
+const char *get_printf_struct(unsigned long long *,
+        unsigned long long, unsigned char);
 void print_signal(int);
 
 void print_syscall(bool, pid_t);

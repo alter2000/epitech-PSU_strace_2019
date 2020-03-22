@@ -23,11 +23,14 @@ bool not_off(int i, unsigned char arg)
     return !(i < MAX_SCS && ALLSCS[i].as[arg] == OFF);
 }
 
-const char *get_printf_struct(unsigned long long scall, unsigned char idx)
+const char *get_printf_struct(unsigned long long *as,
+        unsigned long long scall, unsigned char idx)
 {
+    static char buf[2048] = {0};
+
     (void)scall;
-    (void)idx;
-    return "%#llx";
+    snprintf(buf, sizeof(buf), "%#llx", as[idx]);
+    return buf;
 }
 
 void print_signal(int s)

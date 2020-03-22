@@ -17,8 +17,9 @@ const char *get_printf_fmt(unsigned long long scall, unsigned char idx)
         case INT:    case CHAR:     return "%lld";
         case U:      case U_L:      return "%llu";
         case CHAR_PTRPTR:
+        case STRUCT:
         case LONG:   case PTR:      return "%#llx";
-        case STRUCT: case CHAR_PTR: return "\"%s\"";
+        case CHAR_PTR: return "\"%s\"";
     }
     return "";
 }
@@ -32,7 +33,7 @@ const void *get_printf_arg(pid_t p, unsigned long long scidx,
         case CHAR_PTRPTR:
         case LONG: case PTR: return (const void*)as[idx];
         case CHAR_PTR: return get_string(p, as[idx]);
-        case STRUCT:   return get_printf_struct(scidx, idx);
+        case STRUCT:   return get_printf_struct(as, scidx, idx);
     }
     return 0;
 }

@@ -41,7 +41,7 @@ bool wait_syscall(pid_t p)
         if (WIFSTOPPED(s) && (WSTOPSIG(s) & 0x80))
             return 0;
         if (WIFEXITED(s)) {
-            fprintf(stderr, "--- %s ---\n", ALLSIGS[WSTOPSIG(s)]);
+            fprintf(stderr, "--- %s ---\n", ALLSIGS[(s)]);
             return 1;
         }
         print_signal(s);
