@@ -7,6 +7,21 @@
 
 #include "strace.h"
 
+void load_p(opts_t *as, int *off, int c, const char **v)
+{
+    as->p = true;
+    if (c <= *off) {
+        fputs("pid?", stderr);
+        exit(84);
+    }
+    as->grab = atoi(v[*off + 1]);
+    if (!as->grab) {
+        fputs("pid?", stderr);
+        exit(84);
+    }
+    *off += 2;
+}
+
 void parse_args(opts_t *as, int *off, int c, const char **v)
 {
     if (c == 1) {
@@ -21,13 +36,8 @@ void parse_args(opts_t *as, int *off, int c, const char **v)
         as->s = true;
         (*off)++;
     }
-    if (!strcmp(v[*off], "-p")) {
-        as->p = true;
-        as->grab = atoi(v[*off + 1]);
-        if (!as->grab)
-            exit(84);
-        *off += 2;
-    }
+    if (!strcmp(v[*off], "-p"))
+        load_p(as, off, c, v);
 }
 
 void child(int c, const char **v)

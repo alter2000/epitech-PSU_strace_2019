@@ -35,7 +35,7 @@ void child(int, const char **);
 int trace(bool, pid_t);
 void loop(bool, pid_t);
 bool wait_syscall(pid_t);
-struct user_regs_struct _get_registers(pid_t);
+struct user_regs_struct get_registers(pid_t);
 
 char *syscall_name(struct user_regs_struct);
 bool not_off(int, unsigned char);
@@ -53,7 +53,7 @@ const char *get_printf_fmt(unsigned long long, unsigned char);
 const void *get_printf_arg(pid_t, unsigned long long,
         unsigned long long *, unsigned char);
 
-#define REGS(a) _get_registers((a))
+#define REGS(a) get_registers((a))
 #define RETS rax
 
 #endif

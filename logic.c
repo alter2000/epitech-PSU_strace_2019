@@ -18,7 +18,7 @@ void loop(bool full, pid_t p)
     }
 }
 
-struct user_regs_struct _get_registers(pid_t p)
+struct user_regs_struct get_registers(pid_t p)
 {
     static struct user_regs_struct ret;
 

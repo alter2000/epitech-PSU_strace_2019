@@ -55,21 +55,21 @@ void print_arg(pid_t p,
 
 char *get_string(pid_t p, unsigned long addr)
 {
-	char *buf = malloc(4096);
+    char *buf = malloc(4096);
 
-	for (unsigned long tmp = 0, read = 0; ; read += sizeof(unsigned long)) {
-		if (read + sizeof(unsigned long) > 4096)
-			buf = realloc(buf, sizeof(buf) * 2);
+    for (unsigned long tmp = 0, read = 0; ; read += sizeof(unsigned long)) {
+        if (read + sizeof(unsigned long) > 4096)
+            buf = realloc(buf, sizeof(buf) * 2);
         errno = 0;
-		tmp = ptrace(PTRACE_PEEKDATA, p, addr + read);
-		if (errno != 0) {
+        tmp = ptrace(PTRACE_PEEKDATA, p, addr + read);
+        if (errno != 0) {
             free(buf);
             perror("strace");
             exit(84);
-		}
-		memcpy(buf + read, &tmp, sizeof(unsigned long));
-		if (memchr(&tmp, 0, sizeof(unsigned long)) != NULL)
-			break;
-	}
-	return buf;
+        }
+        memcpy(buf + read, &tmp, sizeof(unsigned long));
+        if (memchr(&tmp, 0, sizeof(unsigned long)) != NULL)
+            break;
+    }
+    return buf;
 }
